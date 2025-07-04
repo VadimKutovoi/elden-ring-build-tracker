@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ronin Spellblade Build Tracker</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #111;
+      color: #f8f8f8;
+      padding: 2rem;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    .stat {
+      margin: 1rem 0;
+    }
+    .bar-container {
+      background-color: #333;
+      border-radius: 4px;
+      width: 100%;
+      max-width: 500px;
+      height: 24px;
+      margin: 0.5rem 0;
+    }
+    .bar {
+      height: 100%;
+      background-color: #0af;
+      border-radius: 4px;
+      text-align: right;
+      padding-right: 8px;
+      box-sizing: border-box;
+      transition: width 0.3s;
+    }
+    input {
+      width: 50px;
+      margin-left: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <h1>Ronin Spellblade Stat Tracker</h1>
+  <div id="stats"></div>
+
+  <script>
+    const maxStat = 60;
+    const initialStats = {
+      Vigor: 50,
+      Mind: 20,
+      Endurance: 15,
+      Strength: 12,
+      Dexterity: 40,
+      Intelligence: 30
+    };
+
+    const container = document.getElementById("stats");
+
+    Object.entries(initialStats).forEach(([stat, value]) => {
+      const statDiv = document.createElement("div");
+      statDiv.className = "stat";
+
+      const label = document.createElement("label");
+      label.textContent = `${stat} (${value}/${maxStat}):`;
+
+      const input = document.createElement("input");
+      input.type = "number";
+      input.min = 0;
+      input.max = maxStat;
+      input.value = value;
+
+      const barContainer = document.createElement("div");
+      barContainer.className = "bar-container";
+
+      const bar = document.createElement("div");
+      bar.className = "bar";
+      bar.style.width = `${(value / maxStat) * 100}%`;
+      bar.textContent = value;
+
+      input.addEventListener("input", () => {
+        const newVal = Math.min(Math.max(parseInt(input.value) || 0, 0), maxStat);
+        bar.style.width = `${(newVal / maxStat) * 100}%`;
+        bar.textContent = newVal;
+        label.textContent = `${stat} (${newVal}/${maxStat}):`;
+      });
+
+      barContainer.appendChild(bar);
+      statDiv.appendChild(label);
+      statDiv.appendChild(input);
+      statDiv.appendChild(barContainer);
+
+      container.appendChild(statDiv);
+    });
+  </script>
+</body>
+</html>
