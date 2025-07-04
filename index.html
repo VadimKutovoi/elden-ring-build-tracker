@@ -15,6 +15,13 @@
       text-align: center;
       margin-bottom: 2rem;
     }
+    .section {
+      margin-bottom: 3rem;
+    }
+    .section h2 {
+      border-bottom: 1px solid #444;
+      padding-bottom: 0.5rem;
+    }
     .stat {
       margin: 1rem 0;
     }
@@ -39,15 +46,63 @@
       width: 50px;
       margin-left: 1rem;
     }
+    .reset-btn {
+      margin-top: 2rem;
+      padding: 0.5rem 1rem;
+      font-size: 1rem;
+      background-color: #f44336;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .reset-btn:hover {
+      background-color: #d32f2f;
+    }
+    ul {
+      list-style-type: square;
+      margin-left: 2rem;
+    }
   </style>
 </head>
 <body>
-  <h1>Ronin Spellblade Stat Tracker</h1>
-  <div id="stats"></div>
+  <h1>Ronin Spellblade Build Tracker</h1>
+  <div class="section">
+    <h2>Stats</h2>
+    <div id="stats"></div>
+    <button class="reset-btn" onclick="resetStats()">Reset to Default</button>
+  </div>
+
+  <div class="section">
+    <h2>Weapons</h2>
+    <ul>
+      <li>Moonveil Katana</li>
+      <li>Uchigatana / Nagakiba (off-hand)</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h2>Spells</h2>
+    <ul>
+      <li>Carian Phalanx</li>
+      <li>Scholar’s Shield</li>
+      <li>Glintblade Phalanx</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h2>Talismans</h2>
+    <ul>
+      <li>Radagon Icon</li>
+      <li>Magic Scorpion Charm</li>
+      <li>Millicent’s Prosthesis</li>
+      <li>Shard of Alexander</li>
+    </ul>
+  </div>
 
   <script>
     const maxStat = 60;
-    const initialStats = {
+    const defaultStats = {
       Vigor: 50,
       Mind: 20,
       Endurance: 15,
@@ -56,9 +111,24 @@
       Intelligence: 30
     };
 
+    function loadStats() {
+      const saved = localStorage.getItem("roninStats");
+      return saved ? JSON.parse(saved) : { ...defaultStats };
+    }
+
+    function saveStats(stats) {
+      localStorage.setItem("roninStats", JSON.stringify(stats));
+    }
+
+    function resetStats() {
+      saveStats(defaultStats);
+      location.reload();
+    }
+
+    const currentStats = loadStats();
     const container = document.getElementById("stats");
 
-    Object.entries(initialStats).forEach(([stat, value]) => {
+    Object.entries(currentStats).forEach(([stat, value]) => {
       const statDiv = document.createElement("div");
       statDiv.className = "stat";
 
@@ -84,6 +154,8 @@
         bar.style.width = `${(newVal / maxStat) * 100}%`;
         bar.textContent = newVal;
         label.textContent = `${stat} (${newVal}/${maxStat}):`;
+        currentStats[stat] = newVal;
+        saveStats(currentStats);
       });
 
       barContainer.appendChild(bar);
